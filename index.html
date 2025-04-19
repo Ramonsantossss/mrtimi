@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MangaDex Viewer</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
@@ -11,21 +12,22 @@
       padding: 5px;
       margin: 0;
       color: black;
-      
     }
 
     h1 {
       margin-top: 40px;
       background-color: #7744D4;
       border-radius: 15px 0px 15px 0px;
-      padding: 5px;
+      padding: 10px;
       color: white;
+      text-align: center;
+      font-size: 1.5rem;
     }
 
     .lista {
-      margin-top: -15px;
+      margin-top: 7px;
       display: flex;
-      gap: 15px;
+      gap: 10px;
       justify-content: flex-start;
       overflow-x: auto;
       white-space: nowrap;
@@ -43,48 +45,46 @@
     .capitulo2 {
       background: white;
       text-align: left;
-      width: 98%;
+      width: 100%;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      
     }
     
     .manga, .capitulo {
       background: white;
       padding: 10px;
-      width: 180px;
-      height: 290px;
+      width: 150px;
+      height: 250px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      text-align: center;
     }
 
     .manga img {
       width: 100%;
-      height: 220px; /* Altura fixa para garantir tamanho uniforme */
-      object-fit: cover; /* Para cobrir a área sem distorcer */
+      height: 170px; /* Ajustado para telas menores */
+      object-fit: cover;
       border-radius: 6px;
     }
 
     .manga h4, .capitulo h4 {
-      font-size: 16px;
+      font-size: 1rem; /* Ajustado */
       margin: 10px 0 5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-align: center;
     }
 
     .capitulo p {
-      font-size: 14px;
-      
+      font-size: 0.9rem; /* Ajustado */
     }
     
     .capitulo2 h4 {
-      font-size: 16px;
+      font-size: 1rem; /* Ajustado */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -92,39 +92,58 @@
     }
 
     .capitulo2 p {
-      font-size: 14px;
-      
+      font-size: 0.9rem; /* Ajustado */
     }
-    
-    .manga3 {
-      margin-top: 7px;
+
+    /* Snowflakes */
+    .snow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
     }
-    
-.snow-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
 
-.snowflake {
-  position: absolute;
-  top: -10px;
-  color: white;
-  font-size: 1em;
-  animation: fall linear infinite;
-}
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: white;
+      font-size: 1em;
+      animation: fall linear infinite;
+    }
 
-@keyframes fall {
-  to {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
-}
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
 
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .manga, .capitulo {
+        width: 120px; /* Ajustado para telas menores */
+        height: 200px; /* Ajustado */
+      }
+
+      h1 {
+        font-size: 1.25rem; /* Ajustado */
+      }
+
+      .lista {
+        gap: 8px;
+      }
+
+      .capitulo2 h4 {
+        font-size: 0.9rem; /* Ajustado */
+      }
+
+      .capitulo2 p {
+        font-size: 0.8rem; /* Ajustado */
+      }
+    }
   </style>
 </head>
 <body>
@@ -135,7 +154,7 @@
 
   <h1>Últimos Lançamentos</h1>
   <center>
-  <div class="lista2" id="lista-lancamentos"></div>
+    <div class="lista2" id="lista-lancamentos"></div>
   </center>
 
   <script>
@@ -144,7 +163,6 @@
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('lista-mangas');
-
         data.data.forEach(manga => {
           const title = manga.attributes.title.en || "Sem título";
           const mangaId = manga.id;
@@ -156,64 +174,60 @@
           const div = document.createElement("div");
           div.className = "manga";
           div.innerHTML = `
-          <a href="detalhes.html?id=${mangaId}" style="text-decoration: none; color: inherit;">
-          <img src="${coverUrl}" alt="Capa de ${title}">
-          <h4>${title}</h4>
-          </a>
+            <a href="detalhes.html?id=${mangaId}" style="text-decoration: none; color: inherit;">
+              <img src="${coverUrl}" alt="Capa de ${title}">
+              <h4>${title}</h4>
+              
+            </a>
           `;
-
           container.appendChild(div);
         });
       });
 
     // LANÇAMENTOS
     fetch("https://api.mangadex.org/chapter?limit=12&order[publishAt]=desc&translatedLanguage[]=en&includes[]=manga")
-  .then(res => res.json())
-  .then(data => {
-      const container = document.getElementById('lista-lancamentos');
-      
-      data.data.forEach(chap => {
-            const chapterNumber = chap.attributes.chapter || "??";
-            const date = new Date(chap.attributes.publishAt).toLocaleDateString();
-            const mangaTitle = chap.relationships.find(r => r.type === "manga")?.attributes?.title?.en || "Mangá desconhecido";
-            const chapterId = chap.id;
-            
-            const div = document.createElement("div");
-            div.className = "manga2"
-            div.innerHTML = `
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('lista-lancamentos');
+        data.data.forEach(chap => {
+          const chapterNumber = chap.attributes.chapter || "??";
+          const date = new Date(chap.attributes.publishAt).toLocaleDateString();
+          const mangaTitle = chap.relationships.find(r => r.type === "manga")?.attributes?.title?.en || "Mangá desconhecido";
+          const chapterId = chap.id;
+          
+          const div = document.createElement("div");
+          div.className = "capitulo2"
+          div.innerHTML = `
             <a href="detalhes.html?id=${chap.id}" style="text-decoration: none; color: inherit;">
-            <h4>${mangaTitle}</h4>
-            <p>Capítulo: ${chapterNumber}</p>
-            <p>Data: ${date}</p>
+              <h4>${mangaTitle}</h4>
+              <p>Capítulo: ${chapterNumber}</p>
+              <p>Data: ${date}</p>
             </a>
             <hr>
           `;
-
           container.appendChild(div);
         });
       });
 
-// Flocos de neve caindo
-function createSnowflake() {
-  const snowflake = document.createElement('div');
-  snowflake.classList.add('snowflake');
-  const symbols = ['❄', '♧'];
-snowflake.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    // Flocos de neve caindo
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      const symbols = ['❄', '♧'];
+      snowflake.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.animationDuration = (2 + Math.random() * 3) + 's';
+      snowflake.style.fontSize = (10 + Math.random() * 20) + 'px';
 
-  snowflake.style.left = Math.random() * 100 + 'vw';
-  snowflake.style.animationDuration = (2 + Math.random() * 3) + 's';
-  snowflake.style.fontSize = (10 + Math.random() * 20) + 'px';
+      document.querySelector('.snow-container').appendChild(snowflake);
 
-  document.querySelector('.snow-container').appendChild(snowflake);
+      setTimeout(() => {
+        snowflake.remove();
+      }, 5000);
+    }
 
-  setTimeout(() => {
-    snowflake.remove();
-  }, 5000);
-}
-
-setInterval(createSnowflake, 200);
-
+    setInterval(createSnowflake, 200);
   </script>
 </body>
 </html>
