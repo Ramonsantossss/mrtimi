@@ -157,29 +157,35 @@
 
   <script>
     // POPULARES
-    fetch("https://api.mangadex.org/manga?limit=12&order[followedCount]=desc&includes[]=cover_art")
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('lista-mangas');
-        data.data.forEach(manga => {
-          const title = manga.attributes.title.en || "Sem título";
-          const mangaId = manga.id;
-          const coverFileName = manga.relationships.find(r => r.type === "cover_art")?.attributes?.fileName;
-          const coverUrl = coverFileName
-            ? `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}.256.jpg`
-            : "";
+    fetch("https://corsproxy.io/?https://api.mangadex.org/manga?limit=12&order[followedCount]=desc")
+  .then(res => res.json())
+  .then(async data => {
+    const container = document.getElementById('lista-mangas');
 
-          const div = document.createElement("div");
-          div.className = "manga";
-          div.innerHTML = `
-            <a href="detalhes.html?id=${mangaId}" style="text-decoration: none; color: inherit;">
-              <img src="${coverUrl}" alt="Capa de ${title}">
-              <h4>${title}</h4>
-            </a>
-          `;
-          container.appendChild(div);
-        });
-      });
+    for (const manga of data.data) {
+      const title = manga.attributes.title.en || "Sem título";
+      const mangaId = manga.id;
+
+      // Buscando a capa separadamente
+      const coverRes = await fetch(`https://corsproxy.io/?https://api.mangadex.org/cover?manga[]=${mangaId}`);
+      const coverData = await coverRes.json();
+      const coverFileName = coverData.data[0]?.attributes?.fileName || "";
+      const coverUrl = coverFileName
+        ? `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}.256.jpg`
+        : "";
+
+      const div = document.createElement("div");
+      div.className = "manga";
+      div.innerHTML = `
+        <a href="detalhes.html?id=${mangaId}" style="text-decoration: none; color: inherit;">
+          <img src="${coverUrl}" alt="Capa de ${title}">
+          <h4>${title}</h4>
+        </a>
+      `;
+      container.appendChild(div);
+    }
+  });
+
 
     // LANÇAMENTOS
     fetch("https://api.mangadex.org/chapter?limit=12&order[publishAt]=desc&translatedLanguage[]=en&includes[]=manga")
