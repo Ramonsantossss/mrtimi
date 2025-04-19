@@ -157,7 +157,7 @@
 
   <script>
     // POPULARES
-    fetch("https://corsproxy.io/?https://api.mangadex.org/manga?limit=12&order[followedCount]=desc&includes[]=cover_art")
+    fetch("https://api.mangadex.org/manga?limit=12&order[followedCount]=desc&includes[]=cover_art")
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('lista-mangas');
@@ -182,7 +182,7 @@
       });
 
     // LANÇAMENTOS
-    fetch("https://corsproxy.io/?https://api.mangadex.org/chapter?limit=12&order[publishAt]=desc&translatedLanguage[]=en&includes[]=manga")
+    fetch("https://api.mangadex.org/chapter?limit=12&order[publishAt]=desc&translatedLanguage[]=en&includes[]=manga")
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('lista-lancamentos');
