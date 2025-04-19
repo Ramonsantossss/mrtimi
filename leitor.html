@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Leitor de Capítulo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .pagina {
+    display: block;
+    width: 100%;
+    margin: -1px;
+    }
+
+
+    .voltar {
+      background: #222;
+      color: #fff;
+      padding: 10px;
+      display: block;
+      text-align: left;
+      text-decoration: none;
+    }
+
+    .loading {
+      margin-top: 50px;
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .navegacao-container {
+      margin: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .navegacao-container a {
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navegacao-container a:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <a class="voltar" href="javascript:history.back()">← Voltar</a>
+
+  <!-- Navegação no topo -->
+  <div id="navegacao-topo" class="navegacao-container"></div>
+
+  <div id="paginas">
+    <p class="loading">Carregando páginas...</p>
+  </div>
+
+  <!-- Navegação de baixo -->
+  <div id="navegacao-base" class="navegacao-container"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const chapterId = params.get("id");
+
+    // Função para carregar as páginas do capítulo
+    async function carregarPaginas() {
+      const container = document.getElementById("paginas");
+
+      try {
+        // Carrega as informações do capítulo
+        const res = await fetch(`https://api.mangadex.org/at-home/server/${chapterId}`);
+        const data = await res.json();
+
+        const baseUrl = data.baseUrl;
+        const chapter = data.chapter;
+        const pages = chapter.data;
+
+        // Limpa a área de páginas e adiciona as novas
+        container.innerHTML = "";
+        pages.forEach(nome => {
+          const img = document.createElement("img");
+          img.src = `${baseUrl}/data/${chapter.hash}/${nome}`;
+          img.className = "pagina";
+          container.appendChild(img);
+        });
+
+        // Chama a função para carregar os capítulos anteriores e próximos
+        carregarCapitulosRelacionados(chapterId, data.chapter.manga);
+      } catch (err) {
+        container.innerHTML = "<p style='color: red;'>Erro ao carregar as páginas.</p>";
+        console.error(err);
+      }
+    }
+
+    // Função para carregar os capítulos anteriores e próximos
+    async function carregarCapitulosRelacionados(chapterId, mangaId) {
+      const navTopo = document.getElementById("navegacao-topo");
+      const navBase = document.getElementById("navegacao-base");
+
+      try {
+        const capsRes = await fetch(`https://api.mangadex.org/chapter?limit=100&translatedLanguage[]=pt-br&manga=${mangaId}&order[chapter]=asc`);
+        const capsData = await capsRes.json();
+
+        // Filtra os capítulos com base no idioma (pt-br) e ordena por capítulo
+        const lista = capsData.data.filter(c => c.attributes.chapter);
+
+        // Encontra o índice do capítulo atual na lista de capítulos
+        const atualIndex = lista.findIndex(c => c.id === chapterId);
+
+        // Capítulo anterior e próximo
+        const anterior = lista[atualIndex - 1];
+        const proximo = lista[atualIndex + 1];
+
+        // Gera os botões de navegação
+        let navHtml = "";
+        if (anterior) {
+          navHtml += `<a href="leitor.html?id=${anterior.id}">← Capítulo Anterior</a>`;
+        }
+        if (proximo) {
+          navHtml += `<a href="leitor.html?id=${proximo.id}">Próximo Capítulo →</a>`;
+        }
+
+        // Coloca os botões no topo e no final
+        navTopo.innerHTML = navHtml;
+        navBase.innerHTML = navHtml;
+      } catch (err) {
+        console.error("Erro ao carregar capítulos relacionados", err);
+      }
+    }
+
+    // Chama a função para carregar as páginas
+    carregarPaginas();
+  </script>
+</body>
+</html>

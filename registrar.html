@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <title>Registro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <div class="login-container">
+    <h2>Registrar</h2>
+    <form id="register-form">
+      <input type="text" id="new-username" placeholder="Novo usuário" required>
+      <input type="text" id="new-email" placeholder="Seu Email" required>
+      <input type="password" id="new-password" placeholder="Nova senha" required>
+      <button type="submit">Criar Conta</button>
+    </form>
+    <p id="register-message"></p>
+    <p style="text-align:center;"><a href="index.html">Já tem conta? Entrar</a></p>
+  </div>
+  <script src="register.js"></script>
+  <script>
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      const symbols = ['❄', '♧'];
+      snowflake.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.animationDuration = (3 + Math.random() * 5) + 's';
+      snowflake.style.fontSize = (10 + Math.random() * 20) + 'px';
+
+      document.body.appendChild(snowflake);
+
+      setTimeout(() => {
+        snowflake.remove();
+      }, 8000);
+    }
+
+    setInterval(createSnowflake, 150);
+  </script>
+</body>
+</html>
