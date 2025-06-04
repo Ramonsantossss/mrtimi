@@ -59,7 +59,7 @@ document.getElementById("login-form").addEventListener("submit", async e => {
     if (result.success) {
       setCookie("username", username, 7);
       setCookie("password", password, 7);
-      window.location.href = "/index.html"; // redireciona se sucesso
+      window.location.href = "https://ramonsantossss.github.io/mrtimi/index.html"; // redireciona se sucesso
     } else {
       msg.textContent = "Usuário ou senha incorretos.";
     }
