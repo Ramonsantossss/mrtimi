@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/login"; // Substitua pela sua API real
+const API_URL = "https://mrtimi-api.onrender.com/api/login"; // Substitua pela sua API real
 
 // Função para salvar o login nos cookies
 function setCookie(name, value, days) {
