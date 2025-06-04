@@ -29,7 +29,7 @@ window.onload = async () => {
     try {
       const res = await login(savedUser, savedPass);
       if (res.success) {
-        window.location.href = "/index.html"; // redireciona se sucesso
+        window.location.href = "https://ramonsantossss.github.io/mrtimi/index.html"; // redireciona se sucesso
       }
     } catch (err) {
       console.log("Erro ao logar automaticamente:", err);
