@@ -94,3 +94,26 @@ function searchMovie() {
     let search = document.getElementById('search-movie').value;
     window.location.href = `./search/search.html`+`?search=${search}`;
 }
+
+window.onload = async () => {
+  const savedUser = getCookie("username");
+  const savedPass = getCookie("password");
+
+  if (!savedUser || !savedPass) {
+    // Se não tiver cookies, redireciona
+    window.location.href = "/login.html";
+    return;
+  }
+
+  try {
+    const res = await login(savedUser, savedPass);
+    if (!res.success) {
+      // Se o login falhar, redireciona
+      window.location.href = "/login.html";
+    }
+    // Se login for bem-sucedido, permanece na página
+  } catch (err) {
+    console.log("Erro ao logar automaticamente:", err);
+    window.location.href = "/login.html";
+  }
+};
