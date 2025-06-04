@@ -3,6 +3,7 @@ document.querySelector('#btnNav').addEventListener('click', event => {
     document.querySelector('#menuNav').classList.toggle('active');
 });
 
+const API_URL = "https://mrtimi-api.onrender.com/api/login"; // Substitua pela sua API real
 const apiKey = "bcc9273e9851f58686fedf85973c8de9";
 const apiBaseUrl = "https://api.themoviedb.org/3";	
 const language = document.documentElement.lang;
@@ -147,6 +148,28 @@ window.onload = async () => {
 };
 
 */
+
+// Função para salvar o login nos cookies
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + (days*24*60*60*1000));
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+// Função para pegar valor de cookie
+function getCookie(name) {
+  const cname = name + "=";
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+  for(let c of ca) {
+    while (c.charAt(0) === ' ') c = c.substring(1);
+    if (c.indexOf(cname) === 0) return c.substring(cname.length, c.length);
+  }
+  return "";
+}
+
+
 
 window.onload = async () => {
   const savedUser = getCookie("username");
