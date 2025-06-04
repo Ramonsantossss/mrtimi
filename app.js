@@ -95,23 +95,51 @@ function searchMovie() {
     window.location.href = `./search/search.html`+`?search=${search}`;
 }
 
+
+
+
+
+async function login(username, password) {
+  try {
+    const response = await fetch("https://mrtimi-api.onrender.com/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password })
+    });
+
+    if (!response.ok) {
+      // Erro de rede ou resposta inválida (ex: 401)
+      return { success: false };
+    }
+
+    const data = await response.json();
+
+    // Verifica se a resposta indica sucesso
+    return { success: data.success, user: data.user };
+  } catch (error) {
+    console.error("Erro na API de login:", error);
+    return { success: false };
+  }
+}
+
+
 window.onload = async () => {
   const savedUser = getCookie("username");
   const savedPass = getCookie("password");
 
   if (!savedUser || !savedPass) {
-    // Se não tiver cookies, redireciona
-    window.location.href = "/login.html";
+    window.location.href = "https://ramonsantossss.github.io/mrtimi/login.html";
     return;
   }
 
   try {
     const res = await login(savedUser, savedPass);
     if (!res.success) {
-      // Se o login falhar, redireciona
       window.location.href = "/login.html";
     }
-    // Se login for bem-sucedido, permanece na página
+    // Se sucesso, permanece na página
   } catch (err) {
     console.log("Erro ao logar automaticamente:", err);
     window.location.href = "/login.html";
