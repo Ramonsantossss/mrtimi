@@ -98,7 +98,7 @@ function searchMovie() {
 
 
 
-
+/*
 async function login(username, password) {
   try {
     const response = await fetch("https://mrtimi-api.onrender.com/login", {
@@ -143,5 +143,23 @@ window.onload = async () => {
   } catch (err) {
     console.log("Erro ao logar automaticamente:", err);
     window.location.href = "/login.html";
+  }
+};
+
+*/
+
+window.onload = async () => {
+  const savedUser = getCookie("username");
+  const savedPass = getCookie("password");
+
+  if (!savedUser && !savedPass) {
+    try {
+      const res = await login(savedUser, savedPass);
+      if (res.success) {
+        window.location.href = "login.html"; // redireciona se sucesso
+      }
+    } catch (err) {
+      console.log("Erro ao logar automaticamente:", err);
+    }
   }
 };
