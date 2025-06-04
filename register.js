@@ -1,4 +1,4 @@
-const REGISTER_URL = "http://localhost:3000/api/register";
+const REGISTER_URL = "https://mrtimi-api.onrender.com/api/register";
 
 document.getElementById("register-form").addEventListener("submit", async e => {
   e.preventDefault();
